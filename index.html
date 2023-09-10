@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>House Search Checklist</title>
+    <style>
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .circle-container {
+            display: flex;
+            flex-direction: row;
+            /* Display circles horizontally */
+        }
+
+        .circle {
+            width: 30px;
+            height: 30px;
+            border: 2px solid black;
+            /* Add a black border to create the circle */
+            border-radius: 50%;
+            background-color: white;
+            /* Set background color to white */
+            cursor: pointer;
+            margin-right: 10px;
+            /* Add margin to separate circles */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            color: black;
+            /* Set text color to black */
+            transition: background-color 0.3s, color 0.3s;
+            /* Add a transition for smoother color change */
+        }
+
+        .selected {
+            background-color: green;
+            /* Set background color to green when selected */
+            color: white;
+            /* Set text color to white when selected */
+        }
+    </style>
+</head>
+
+<body>
+    <h1>House Search Checklist</h1>
+
+    <div class="checklist-item">
+        <span>Location</span>
+        <div class="circle-container">
+            <div class="circle" data-rating="1">1</div>
+            <div class="circle" data-rating="2">2</div>
+            <div class="circle" data-rating="3">3</div>
+            <div class="circle" data-rating="4">4</div>
+            <div class="circle" data-rating="5">5</div>
+        </div>
+    </div>
+
+    <div class="checklist-item">
+        <span>Price</span>
+        <div class="circle-container">
+            <div class="circle" data-rating="1">1</div>
+            <div class="circle" data-rating="2">2</div>
+            <div class="circle" data-rating="3">3</div>
+            <div class="circle" data-rating="4">4</div>
+            <div class="circle" data-rating="5">5</div>
+        </div>
+    </div>
+
+    <!-- Add more checklist items as needed -->
+
+    <script>
+        const circles = document.querySelectorAll(".circle");
+
+        circles.forEach(circle => {
+            circle.addEventListener("click", () => {
+                // Get the parent checklist container
+                const checklistContainer = circle.closest(".checklist-item").querySelector(".circle-container");
+
+                // Deselect all circles in the same checklist item
+                checklistContainer.querySelectorAll(".circle").forEach(innerCircle => {
+                    if (innerCircle !== circle) {
+                        innerCircle.classList.remove("selected");
+                    }
+                });
+
+                // Toggle the selected state of the clicked circle
+                circle.classList.toggle("selected");
+            });
+        });
+    </script>
+</body>
+
+</html>
