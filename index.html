@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>House Search Checklist</title>
+    <title>Dynamic Checklist</title>
+
     <style>
       .checklist-item {
         display: flex;
@@ -33,34 +34,78 @@
       }
     </style>
   </head>
+
   <body>
     <h1>House Search Checklist</h1>
 
-    <div class="checklist-item">
-      <span>Location</span>
-      <div class="circle-container">
-        <div class="circle" data-rating="1">1</div>
-        <div class="circle" data-rating="2">2</div>
-        <div class="circle" data-rating="3">3</div>
-        <div class="circle" data-rating="4">4</div>
-        <div class="circle" data-rating="5">5</div>
-      </div>
-    </div>
+    <!-- Add a house address input field -->
+    <label for="houseAddress">House Address:</label>
+    <input type="text" id="houseAddress" />
 
-    <div class="checklist-item">
-      <span>Price</span>
-      <div class="circle-container">
-        <div class="circle" data-rating="1">1</div>
-        <div class="circle" data-rating="2">2</div>
-        <div class="circle" data-rating="3">3</div>
-        <div class="circle" data-rating="4">4</div>
-        <div class="circle" data-rating="5">5</div>
-      </div>
-    </div>
+    <div class="checklist"></div>
 
-    <!-- Add more checklist items as needed -->
+    <!-- Add a Submit button -->
+    <button id="submitBtn">Submit</button>
 
     <script>
+      // Checklist data
+      const checklistItems = [
+        {
+          title: 'Location',
+          maxRating: 5,
+        },
+        {
+          title: 'Price',
+          maxRating: 5,
+        },
+      ];
+
+      // Render function
+      function renderChecklist() {
+        // Clear checklist
+        document.querySelector('.checklist').innerHTML = '';
+
+        // Loop through data
+        checklistItems.forEach((item) => {
+          // Create item div
+          console.log('creating div for checklist');
+          const checklistItem = document.createElement('div');
+          checklistItem.classList.add('checklist-item');
+
+          // Create title
+          const title = document.createElement('span');
+          title.textContent = item.title;
+
+          // Create ratings container
+          const ratingsContainer = document.createElement('div');
+          ratingsContainer.classList.add('circle-container');
+
+          // Create rating circles
+          for (let i = 1; i <= item.maxRating; i++) {
+            const ratingCircle = document.createElement('div');
+            ratingCircle.classList.add('circle');
+            ratingCircle.dataset.rating = i;
+            ratingCircle.textContent = i;
+            ratingsContainer.appendChild(ratingCircle);
+          }
+
+          // Append elements
+          checklistItem.appendChild(title);
+          checklistItem.appendChild(ratingsContainer);
+
+          // Append item to checklist
+          document.querySelector('.checklist').appendChild(checklistItem);
+        });
+      }
+
+      // Initial render
+      renderChecklist();
+
+      // Rerender on data change
+      // checklistItems.forEach((item) => {
+      //   item.addEventListener('change', renderChecklist);
+      // });
+
       const circles = document.querySelectorAll('.circle');
 
       circles.forEach((circle) => {
@@ -82,6 +127,33 @@
           // Toggle the selected state of the clicked circle
           circle.classList.toggle('selected');
         });
+      });
+
+      // Add functionality for the Submit button
+      const submitButton = document.getElementById('submitBtn');
+      submitButton.addEventListener('click', () => {
+        const houseAddress = document.getElementById('houseAddress').value;
+        if (houseAddress) {
+          // Create a file with the house name as the filename and ".txt" as the suffix
+          const fileName = `${houseAddress}.txt`;
+
+          // You can write data to the file here or perform any desired action
+          // For example, you can create a Blob and trigger a download
+
+          const data = 'This is some example data for the file.';
+          const blob = new Blob([data], { type: 'text/plain' });
+          const url = window.URL.createObjectURL(blob);
+
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+
+          window.URL.revokeObjectURL(url);
+        } else {
+          alert('Please enter a house address before submitting.');
+        }
       });
     </script>
   </body>
