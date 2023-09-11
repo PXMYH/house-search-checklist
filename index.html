@@ -168,10 +168,14 @@
       // Add functionality for the Submit button
       const submitButton = document.getElementById('submitBtn');
       submitButton.addEventListener('click', () => {
-        const houseAddress = document.getElementById('houseAddress').value;
+        const houseAddressInput = document.getElementById('houseAddress');
+        const houseAddress = houseAddressInput.value;
         if (houseAddress) {
           // Add the house address as the key to the dictionary
           checklistResponses['Address'] = houseAddress;
+
+          // Clear the address input
+          houseAddressInput.value = '';
 
           // Update the response table when clicking the Submit button
           updateResponseTable();
