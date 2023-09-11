@@ -2,7 +2,6 @@
 <html>
   <head>
     <title>Dynamic Checklist</title>
-
     <style>
       .checklist-item {
         display: flex;
@@ -32,9 +31,24 @@
         background-color: green; /* Set background color to green when selected */
         color: white; /* Set text color to white when selected */
       }
+      table {
+        border-collapse: collapse;
+        width: 100%;
+        margin-top: 20px;
+      }
+
+      th,
+      td {
+        border: 1px solid black;
+        padding: 8px;
+        text-align: left;
+      }
+
+      th {
+        background-color: #f2f2f2;
+      }
     </style>
   </head>
-
   <body>
     <h1>House Search Checklist</h1>
 
@@ -43,6 +57,17 @@
     <input type="text" id="houseAddress" />
 
     <div class="checklist"></div>
+
+    <!-- Display checklist responses as a table -->
+    <table id="responseTable">
+      <thead>
+        <tr>
+          <th>Checklist Item</th>
+          <th>Response</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
 
     <!-- Add a Submit button -->
     <button id="submitBtn">Submit</button>
@@ -60,6 +85,9 @@
         },
       ];
 
+      // Dictionary to store checklist responses
+      const checklistResponses = {};
+
       // Render function
       function renderChecklist() {
         // Clear checklist
@@ -68,7 +96,6 @@
         // Loop through data
         checklistItems.forEach((item) => {
           // Create item div
-          console.log('creating div for checklist');
           const checklistItem = document.createElement('div');
           checklistItem.classList.add('checklist-item');
 
@@ -101,11 +128,6 @@
       // Initial render
       renderChecklist();
 
-      // Rerender on data change
-      // checklistItems.forEach((item) => {
-      //   item.addEventListener('change', renderChecklist);
-      // });
-
       const circles = document.querySelectorAll('.circle');
 
       circles.forEach((circle) => {
@@ -126,6 +148,17 @@
 
           // Toggle the selected state of the clicked circle
           circle.classList.toggle('selected');
+
+          // Get checklist item and response
+          const checklistItem = circle
+            .closest('.checklist-item')
+            .querySelector('span').textContent;
+          const response = circle.classList.contains('selected')
+            ? circle.dataset.rating
+            : '';
+
+          // Update or add the response to the dictionary
+          checklistResponses[checklistItem] = response;
         });
       });
 
@@ -134,27 +167,31 @@
       submitButton.addEventListener('click', () => {
         const houseAddress = document.getElementById('houseAddress').value;
         if (houseAddress) {
-          // Create a file with the house name as the filename and ".txt" as the suffix
-          const fileName = `${houseAddress}.txt`;
-
-          // You can write data to the file here or perform any desired action
-          // For example, you can create a Blob and trigger a download
-
-          const data = 'This is some example data for the file.';
-          const blob = new Blob([data], { type: 'text/plain' });
-          const url = window.URL.createObjectURL(blob);
-
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = fileName;
-          document.body.appendChild(a);
-          a.click();
-
-          window.URL.revokeObjectURL(url);
+          // Update the response table when clicking the Submit button
+          updateResponseTable();
         } else {
           alert('Please enter a house address before submitting.');
         }
       });
+
+      // Function to update the response table
+      function updateResponseTable() {
+        const tableBody = document.querySelector('#responseTable tbody');
+        tableBody.innerHTML = '';
+
+        for (const item in checklistResponses) {
+          if (checklistResponses.hasOwnProperty(item)) {
+            const row = document.createElement('tr');
+            const itemName = document.createElement('td');
+            itemName.textContent = item;
+            const itemResponse = document.createElement('td');
+            itemResponse.textContent = checklistResponses[item];
+            row.appendChild(itemName);
+            row.appendChild(itemResponse);
+            tableBody.appendChild(row);
+          }
+        }
+      }
     </script>
   </body>
 </html>
