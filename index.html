@@ -58,7 +58,7 @@
 
     <div class="checklist"></div>
 
-    <!-- Display checklist responses as a table -->
+    <!-- Display checklist responses as a table with column names -->
     <table id="responseTable">
       <thead>
         <tr>
@@ -123,6 +123,9 @@
           // Append item to checklist
           document.querySelector('.checklist').appendChild(checklistItem);
         });
+
+        // Update the response table with column names
+        updateResponseTableHeaders();
       }
 
       // Initial render
@@ -177,21 +180,31 @@
         }
       });
 
-      // Function to update the response table
-      function updateResponseTable() {
+      // Function to update the response table with column names
+      function updateResponseTableHeaders() {
         const table = document.querySelector('#responseTable');
         const tableHead = table.querySelector('thead');
-        const tableBody = table.querySelector('tbody');
 
-        // Clear existing columns and rows
+        // Clear existing columns
         tableHead.innerHTML = '';
-        tableBody.innerHTML = '';
 
         // Create a column for the address
         const addressHeader = document.createElement('th');
         addressHeader.textContent = 'Address';
         tableHead.appendChild(addressHeader);
 
+        // Loop through checklist items and create columns
+        checklistItems.forEach((item) => {
+          const itemHeader = document.createElement('th');
+          itemHeader.textContent = item.title;
+          tableHead.appendChild(itemHeader);
+        });
+      }
+
+      // Function to update the response table
+      function updateResponseTable() {
+        const table = document.querySelector('#responseTable');
+        const tableBody = table.querySelector('tbody');
         const row = document.createElement('tr');
 
         // Create a cell for the address
@@ -201,13 +214,9 @@
 
         // Loop through checklist items and create columns
         checklistItems.forEach((item) => {
-          const itemHeader = document.createElement('th');
-          itemHeader.textContent = item.title;
-          tableHead.appendChild(itemHeader);
-
-          // Create a cell for the current checklist item's response
+          const itemResponse = checklistResponses[item.title];
           const itemResponseCell = document.createElement('td');
-          itemResponseCell.textContent = checklistResponses[item.title];
+          itemResponseCell.textContent = itemResponse;
           row.appendChild(itemResponseCell);
         });
 
