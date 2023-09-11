@@ -57,7 +57,7 @@
 
     <div class="checklist"></div>
 
-    <button id="submitBtn">Submit</button>
+    <button id="submitBtn" disabled>Submit</button>
 
     <table id="responseTable">
       <thead>
@@ -106,6 +106,7 @@
       ];
 
       let checklistResponses = {};
+      let selectedCircles = 0;
 
       function renderChecklist() {
         document.querySelector('.checklist').innerHTML = '';
@@ -158,6 +159,12 @@
 
           circle.classList.toggle('selected');
 
+          // Check if all circles are selected
+          selectedCircles = document.querySelectorAll(
+            '.checklist-item .circle.selected'
+          ).length;
+          checkSubmitButtonStatus();
+
           const checklistItem = circle
             .closest('.checklist-item')
             .querySelector('span').textContent;
@@ -182,7 +189,7 @@
       submitButton.addEventListener('click', () => {
         const houseAddressInput = document.getElementById('houseAddress');
         const houseAddress = houseAddressInput.value;
-        if (houseAddress) {
+        if (houseAddress && selectedCircles === circles.length) {
           houseAddressInput.value = '';
 
           // Clear circle selections
@@ -190,10 +197,15 @@
             circle.classList.remove('selected');
           });
 
+          selectedCircles = 0;
+          checkSubmitButtonStatus();
+
           updateResponseTable();
           saveDataToLocalStorage();
-        } else {
+        } else if (!houseAddress) {
           alert('Please enter a house address before submitting.');
+        } else {
+          alert('Please rate all checklist items before submitting.');
         }
       });
 
@@ -257,7 +269,16 @@
         );
       }
 
+      function checkSubmitButtonStatus() {
+        if (selectedCircles === checklistItems.length) {
+          submitButton.removeAttribute('disabled');
+        } else {
+          submitButton.setAttribute('disabled', 'disabled');
+        }
+      }
+
       loadStoredData();
+      checkSubmitButtonStatus();
     </script>
   </body>
 </html>
