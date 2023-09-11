@@ -58,7 +58,7 @@
 
     <div class="checklist"></div>
 
-    <!-- Add a Submit button -->
+    <!-- Add a Submit button above the table -->
     <button id="submitBtn">Submit</button>
 
     <!-- Display checklist responses as a table with column names -->
@@ -110,7 +110,7 @@
       ];
 
       // Dictionary to store checklist responses
-      const checklistResponses = {};
+      let checklistResponses = {};
 
       // Render function
       function renderChecklist() {
@@ -150,6 +150,9 @@
 
         // Update the response table with column names
         updateResponseTableHeaders();
+
+        // Load stored data from localStorage
+        loadStoredData();
       }
 
       // Initial render
@@ -186,6 +189,9 @@
 
           // Update or add the response to the dictionary
           checklistResponses[checklistItem] = response;
+
+          // Save the updated response data to localStorage
+          saveDataToLocalStorage();
         });
       });
 
@@ -203,6 +209,9 @@
 
           // Update the response table when clicking the Submit button
           updateResponseTable();
+
+          // Save the updated response data to localStorage
+          saveDataToLocalStorage();
         } else {
           alert('Please enter a house address before submitting.');
         }
@@ -249,6 +258,25 @@
         });
 
         tableBody.appendChild(row);
+      }
+
+      // Function to load stored data from localStorage
+      function loadStoredData() {
+        const storedData = localStorage.getItem('checklistResponses');
+        if (storedData) {
+          checklistResponses = JSON.parse(storedData);
+
+          // Update the response table UI with the retrieved data
+          updateResponseTable();
+        }
+      }
+
+      // Function to save response data to localStorage
+      function saveDataToLocalStorage() {
+        localStorage.setItem(
+          'checklistResponses',
+          JSON.stringify(checklistResponses)
+        );
       }
     </script>
   </body>
