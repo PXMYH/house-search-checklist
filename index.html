@@ -52,16 +52,13 @@
   <body>
     <h1>House Search Checklist</h1>
 
-    <!-- Add a house address input field -->
     <label for="houseAddress">House Address:</label>
     <input type="text" id="houseAddress" />
 
     <div class="checklist"></div>
 
-    <!-- Add a Submit button above the table -->
     <button id="submitBtn">Submit</button>
 
-    <!-- Display checklist responses as a table with column names -->
     <table id="responseTable">
       <thead>
         <tr>
@@ -73,7 +70,6 @@
     </table>
 
     <script>
-      // Checklist data
       const checklistItems = [
         {
           title: 'Location',
@@ -109,29 +105,21 @@
         },
       ];
 
-      // Dictionary to store checklist responses
       let checklistResponses = {};
 
-      // Render function
       function renderChecklist() {
-        // Clear checklist
         document.querySelector('.checklist').innerHTML = '';
 
-        // Loop through data
         checklistItems.forEach((item) => {
-          // Create item div
           const checklistItem = document.createElement('div');
           checklistItem.classList.add('checklist-item');
 
-          // Create title
           const title = document.createElement('span');
           title.textContent = item.title;
 
-          // Create ratings container
           const ratingsContainer = document.createElement('div');
           ratingsContainer.classList.add('circle-container');
 
-          // Create rating circles
           for (let i = 1; i <= item.maxRating; i++) {
             const ratingCircle = document.createElement('div');
             ratingCircle.classList.add('circle');
@@ -140,34 +128,26 @@
             ratingsContainer.appendChild(ratingCircle);
           }
 
-          // Append elements
           checklistItem.appendChild(title);
           checklistItem.appendChild(ratingsContainer);
 
-          // Append item to checklist
           document.querySelector('.checklist').appendChild(checklistItem);
         });
 
-        // Update the response table with column names
         updateResponseTableHeaders();
-
-        // Load stored data from localStorage
         loadStoredData();
       }
 
-      // Initial render
       renderChecklist();
 
       const circles = document.querySelectorAll('.circle');
 
       circles.forEach((circle) => {
         circle.addEventListener('click', () => {
-          // Get the parent checklist container
           const checklistContainer = circle
             .closest('.checklist-item')
             .querySelector('.circle-container');
 
-          // Deselect all circles in the same checklist item
           checklistContainer
             .querySelectorAll('.circle')
             .forEach((innerCircle) => {
@@ -176,10 +156,8 @@
               }
             });
 
-          // Toggle the selected state of the clicked circle
           circle.classList.toggle('selected');
 
-          // Get checklist item and response
           const checklistItem = circle
             .closest('.checklist-item')
             .querySelector('span').textContent;
@@ -187,50 +165,43 @@
             ? circle.dataset.rating
             : '';
 
-          // Update or add the response to the dictionary
-          checklistResponses[checklistItem] = response;
+          const houseAddress = document.getElementById('houseAddress').value;
 
-          // Save the updated response data to localStorage
-          saveDataToLocalStorage();
+          let responseObj = checklistResponses[houseAddress];
+
+          if (!responseObj) {
+            responseObj = { Address: houseAddress };
+            checklistResponses[houseAddress] = responseObj;
+          }
+
+          responseObj[checklistItem] = response;
         });
       });
 
-      // Add functionality for the Submit button
       const submitButton = document.getElementById('submitBtn');
       submitButton.addEventListener('click', () => {
         const houseAddressInput = document.getElementById('houseAddress');
         const houseAddress = houseAddressInput.value;
         if (houseAddress) {
-          // Add the house address as the key to the dictionary
-          checklistResponses['Address'] = houseAddress;
-
-          // Clear the address input
           houseAddressInput.value = '';
 
-          // Update the response table when clicking the Submit button
           updateResponseTable();
-
-          // Save the updated response data to localStorage
           saveDataToLocalStorage();
         } else {
           alert('Please enter a house address before submitting.');
         }
       });
 
-      // Function to update the response table with column names
       function updateResponseTableHeaders() {
         const table = document.querySelector('#responseTable');
         const tableHead = table.querySelector('thead');
 
-        // Clear existing columns
         tableHead.innerHTML = '';
 
-        // Create a column for the address
         const addressHeader = document.createElement('th');
         addressHeader.textContent = 'Address';
         tableHead.appendChild(addressHeader);
 
-        // Loop through checklist items and create columns
         checklistItems.forEach((item) => {
           const itemHeader = document.createElement('th');
           itemHeader.textContent = item.title;
@@ -238,46 +209,50 @@
         });
       }
 
-      // Function to update the response table
       function updateResponseTable() {
         const table = document.querySelector('#responseTable');
         const tableBody = table.querySelector('tbody');
-        const row = document.createElement('tr');
 
-        // Create a cell for the address
-        const addressCell = document.createElement('td');
-        addressCell.textContent = checklistResponses['Address'];
-        row.appendChild(addressCell);
+        tableBody.innerHTML = '';
 
-        // Loop through checklist items and create columns
-        checklistItems.forEach((item) => {
-          const itemResponse = checklistResponses[item.title];
-          const itemResponseCell = document.createElement('td');
-          itemResponseCell.textContent = itemResponse;
-          row.appendChild(itemResponseCell);
-        });
+        for (const houseAddress in checklistResponses) {
+          if (Object.hasOwnProperty.call(checklistResponses, houseAddress)) {
+            const response = checklistResponses[houseAddress];
+            const row = document.createElement('tr');
 
-        tableBody.appendChild(row);
+            const addressCell = document.createElement('td');
+            addressCell.textContent = houseAddress;
+            row.appendChild(addressCell);
+
+            checklistItems.forEach((item) => {
+              const itemTitle = item.title;
+              const itemResponse = response[itemTitle] || '';
+              const itemResponseCell = document.createElement('td');
+              itemResponseCell.textContent = itemResponse;
+              row.appendChild(itemResponseCell);
+            });
+
+            tableBody.appendChild(row);
+          }
+        }
       }
 
-      // Function to load stored data from localStorage
       function loadStoredData() {
         const storedData = localStorage.getItem('checklistResponses');
         if (storedData) {
           checklistResponses = JSON.parse(storedData);
-
-          // Update the response table UI with the retrieved data
           updateResponseTable();
         }
       }
 
-      // Function to save response data to localStorage
       function saveDataToLocalStorage() {
         localStorage.setItem(
           'checklistResponses',
           JSON.stringify(checklistResponses)
         );
       }
+
+      loadStoredData();
     </script>
   </body>
 </html>
