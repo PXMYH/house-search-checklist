@@ -1,35 +1,35 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>House Checklist</title>
+    <title>Dynamic Checklist</title>
     <style>
       .checklist-item {
         display: flex;
         align-items: center;
-        margin-bottom: 20px; /* Add margin to create spacing between checklist items */
+        margin-bottom: 20px;
       }
       .circle-container {
         display: flex;
-        flex-direction: row; /* Display circles horizontally */
+        flex-direction: row;
       }
       .circle {
         width: 30px;
         height: 30px;
-        border: 2px solid black; /* Add a black border to create the circle */
+        border: 2px solid black;
         border-radius: 50%;
-        background-color: white; /* Set background color to white */
+        background-color: white;
         cursor: pointer;
-        margin-right: 10px; /* Add margin to separate circles */
+        margin-right: 10px;
         display: flex;
         justify-content: center;
         align-items: center;
         font-weight: bold;
-        color: black; /* Set text color to black */
-        transition: background-color 0.3s, color 0.3s; /* Add a transition for smoother color change */
+        color: black;
+        transition: background-color 0.3s, color 0.3s;
       }
       .selected {
-        background-color: green; /* Set background color to green when selected */
-        color: white; /* Set text color to white when selected */
+        background-color: green;
+        color: white;
       }
       table {
         border-collapse: collapse;
@@ -184,6 +184,11 @@
         const houseAddress = houseAddressInput.value;
         if (houseAddress) {
           houseAddressInput.value = '';
+
+          // Clear circle selections
+          circles.forEach((circle) => {
+            circle.classList.remove('selected');
+          });
 
           updateResponseTable();
           saveDataToLocalStorage();
